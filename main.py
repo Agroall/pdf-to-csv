@@ -74,23 +74,24 @@ def pdf_to_csv(uploaded_file):
                     df = pd.DataFrame(table)
                     transaction_tables.append(df)
 
-    if len(metadata_table) < 2:
-        df_metadata = ''
-        pass
-    else:
+    # Handle metadata
+    if metadata_table:
         df_metadata = pd.concat(metadata_table).reset_index(drop=True)
-
-    if len(transaction_tables) < 2:
-        df_transactions = ''
-        pass
     else:
+        df_metadata = pd.DataFrame(columns=["Field", "Value"])
+
+    # Handle transactions
+    if transaction_tables:
         df_transactions = pd.concat(transaction_tables)
         df_transactions.columns = df_transactions.iloc[0, :].astype(str)
         df_transactions = df_transactions.iloc[1:, :].reset_index(drop=True)
         df_transactions.columns = [col.strip() for col in df_transactions.columns]
         df_transactions = df_transactions.astype(str)
+    else:
+        df_transactions = pd.DataFrame()
 
     return df_metadata, df_transactions
+
 
 
 # ---------- Uploader ----------
@@ -110,29 +111,30 @@ if uploaded_files:
 
         with col1:
             st.markdown("### 🧾 Metadata")
-            st.dataframe(df_meta, use_container_width=True)
-
-            # Download Metadata
-            meta_csv = df_meta.to_csv(index=False).encode("utf-8")
-            st.download_button(
-                label="⬇️ Download Metadata CSV",
-                data=meta_csv,
-                file_name=f"{uploaded_file.name}_metadata.csv",
-                mime="text/csv"
-            )
+            if not df_meta.empty:
+                st.dataframe(df_meta, use_container_width=True)
+                st.download_button(
+                    label="⬇️ Download Metadata CSV",
+                    data=df_meta.to_csv(index=False).encode("utf-8"),
+                    file_name=f"{uploaded_file.name}_metadata.csv",
+                    mime="text/csv"
+                )
+            else:
+                st.info("No metadata table found.")
 
         with col2:
             st.markdown("### 📑 Transactions")
-            st.dataframe(df_txn, use_container_width=True)
+            if not df_txn.empty:
+                st.dataframe(df_txn, use_container_width=True)
+                st.download_button(
+                    label="⬇️ Download Transactions CSV",
+                    data=df_txn.to_csv(index=False).encode("utf-8"),
+                    file_name=f"{uploaded_file.name}_transactions.csv",
+                    mime="text/csv"
+                )
+            else:
+                st.info("No transaction table found.")
 
-            # Download Transactions
-            txn_csv = df_txn.to_csv(index=False).encode("utf-8")
-            st.download_button(
-                label="⬇️ Download Transactions CSV",
-                data=txn_csv,
-                file_name=f"{uploaded_file.name}_transactions.csv",
-                mime="text/csv"
-            )
 
         st.success("✅ File processed successfully!")
 
