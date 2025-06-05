@@ -74,13 +74,21 @@ def pdf_to_csv(uploaded_file):
                     df = pd.DataFrame(table)
                     transaction_tables.append(df)
 
-    df_metadata = pd.concat(metadata_table).reset_index(drop=True)
-    df_transactions = pd.concat(transaction_tables)
+    if len(metadata_table) < 2:
+        df_metadata = ''
+        pass
+    else:
+        df_metadata = pd.concat(metadata_table).reset_index(drop=True)
 
-    df_transactions.columns = df_transactions.iloc[0, :].astype(str)
-    df_transactions = df_transactions.iloc[1:, :].reset_index(drop=True)
-    df_transactions.columns = [col.strip() for col in df_transactions.columns]
-    df_transactions = df_transactions.astype(str)
+    if len(transaction_tables) < 2:
+        df_transactions = ''
+        pass
+    else:
+        df_transactions = pd.concat(transaction_tables)
+        df_transactions.columns = df_transactions.iloc[0, :].astype(str)
+        df_transactions = df_transactions.iloc[1:, :].reset_index(drop=True)
+        df_transactions.columns = [col.strip() for col in df_transactions.columns]
+        df_transactions = df_transactions.astype(str)
 
     return df_metadata, df_transactions
 
