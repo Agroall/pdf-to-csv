@@ -38,7 +38,7 @@ def pdf_to_csv(uploaded_file):
         df_transactions = pd.concat(transaction_tables)
         df_transactions.columns = df_transactions.iloc[0, :].astype(str)
         df_transactions = df_transactions.iloc[1:, :].reset_index(drop=True)
-        df_transactions.columns = [col.strip() for col in df_transactions.columns]
+        # df_transactions.columns = [col.strip() for col in df_transactions.columns]
         # df_transactions = df_transactions.astype(str)
     else:
         df_transactions = pd.DataFrame()
