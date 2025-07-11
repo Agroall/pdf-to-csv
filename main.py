@@ -54,7 +54,7 @@ def pdf_to_csv(uploaded_file):
     df_transactions = df_transactions.reset_index(drop=True)
 
 
-    return df_metadata, df_transactions
+    return df_metadata, df_transactions, index_list
 
 
 
@@ -68,7 +68,7 @@ if uploaded_files:
         st.divider()
         st.subheader(f"📘 File: `{uploaded_file.name}`")
         with st.spinner("Processing file..."):
-            df_meta, df_txn = pdf_to_csv(uploaded_file)
+            df_meta, df_txn, idx = pdf_to_csv(uploaded_file)
 
         # Layout
         col1, col2 = st.columns(2)
@@ -101,4 +101,5 @@ if uploaded_files:
 
 
         st.success("✅ File processed successfully!")
+        st.write(idx)
 
