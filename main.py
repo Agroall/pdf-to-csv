@@ -39,7 +39,7 @@ def pdf_to_csv(uploaded_file):
         df_transactions.columns = df_transactions.iloc[0, :].astype(str)
         df_transactions = df_transactions.iloc[1:, :].reset_index(drop=True)
         df_transactions.columns = [col.strip() for col in df_transactions.columns]
-        df_transactions = df_transactions.astype(str)
+        # df_transactions = df_transactions.astype(str)
     else:
         df_transactions = pd.DataFrame()
 
@@ -52,7 +52,7 @@ def pdf_to_csv(uploaded_file):
 
     df_transactions.drop(index=index_list, inplace=True)
     df_transactions = df_transactions.reset_index(drop=True)
-    
+
 
     return df_metadata, df_transactions
 
