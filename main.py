@@ -45,10 +45,11 @@ def pdf_to_csv(uploaded_file):
 
     index_list = []
 
-    for index, _ in df_transactions.iterrows():
-        if df_transactions.iloc[index, :].isna().sum() >= 2:
+    for index, row in df_transactions.iterrows():
+        if len(set([x for x in df_transactions.iloc[index, :]])) < 3:
             index_list.append(index)
             df_transactions.iloc[index-1, -1] = str(df_transactions.iloc[index-1, -1]) + str(df_transactions.iloc[index, -1])
+
 
     df_transactions.drop(index=index_list, inplace=True)
     df_transactions = df_transactions.reset_index(drop=True)
