@@ -45,14 +45,20 @@ def pdf_to_csv(uploaded_file):
 
     
     index_list = []
-    for index, row in df_transactions.iterrows():
-        if df_transactions.iloc[index, :].isna().sum() >= 2:
-            index_list.append(index)
-            df_transactions.iloc[index-1, -1] = str(df_transactions.iloc[index-1, -1]) + str(df_transactions.iloc[index, -1])
 
+    for index in range(1, len(df_transactions)):
+        row = df_transactions.iloc[index, :]
+    # Count how many columns are effectively empty (NaN or blank string)
+        empty_count = sum(cell.strip() == '' for cell in row.fillna(''))
+
+    # Assume a continuation row if most cells are empty (adjust threshold if needed)
+    if empty_count >= len(df_transactions.columns) - 2:
+        index_list.append(index)
+        # Merge the current 'Remarks' into the previous row's 'Remarks'
+        df_transactions.iloc[index - 1, -1] += ' ' + df_transactions.iloc[index, -1]
 
     df_transactions.drop(index=index_list, inplace=True)
-    df_transactions = df_transactions.reset_index(drop=True)
+    df_transactions.reset_index(drop=True, inplace=True)
 
 
     return df_metadata, df_transactions
