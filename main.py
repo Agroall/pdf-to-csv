@@ -39,7 +39,6 @@ def pdf_to_csv(uploaded_file):
         df_transactions.columns = df_transactions.iloc[0, :].astype(str)
         df_transactions = df_transactions.iloc[1:, :].reset_index(drop=True)
         df_transactions.columns = [col.strip() for col in df_transactions.columns]
-        # df_transactions = df_transactions.astype(str)
     else:
         df_transactions = pd.DataFrame()
 
@@ -50,7 +49,7 @@ def clean_rows(df):
     index_list = []
 
     for index, row in df.iterrows():
-        if len(set([x for x in df.iloc[index, :]])) < 7:
+        if len(set([x for x in df.iloc[index, :]])) < len(df.columns):
             index_list.append(index)
             df.iloc[index-1, -1] = str(df.iloc[index-1, -1]) + str(df.iloc[index, -1])
 
