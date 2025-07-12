@@ -43,19 +43,24 @@ def pdf_to_csv(uploaded_file):
     else:
         df_transactions = pd.DataFrame()
 
+    return df_metadata, df_transactions
+
+
+def clean_rows(df):
     index_list = []
 
-    for index, row in df_transactions.iterrows():
-        if len(set([x for x in df_transactions.iloc[index, :]])) < 3:
+    for index, _ in df.iterrows():
+        if len(set([x for x in df.iloc[index, :]])) < 3:
             index_list.append(index)
-            df_transactions.iloc[index-1, -1] = str(df_transactions.iloc[index-1, -1]) + str(df_transactions.iloc[index, -1])
+            df.iloc[index-1, -1] = str(df.iloc[index-1, -1]) + str(df.iloc[index, -1])
 
 
-    df_transactions.drop(index=index_list, inplace=True)
-    df_transactions = df_transactions.reset_index(drop=True)
+    df.drop(index=index_list, inplace=True)
+    df = df.reset_index(drop=True)
+
+    return df
 
 
-    return df_metadata, df_transactions, index_list
 
 
 
@@ -69,7 +74,8 @@ if uploaded_files:
         st.divider()
         st.subheader(f"📘 File: `{uploaded_file.name}`")
         with st.spinner("Processing file..."):
-            df_meta, df_txn, idx = pdf_to_csv(uploaded_file)
+            df_meta, df_txn = pdf_to_csv(uploaded_file)
+            df_txn = clean_rows(df_txn)
 
         # Layout
         col1, col2 = st.columns(2)
@@ -102,5 +108,4 @@ if uploaded_files:
 
 
         st.success("✅ File processed successfully!")
-        st.write(idx)
-
+    
