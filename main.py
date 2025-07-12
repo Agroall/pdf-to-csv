@@ -49,8 +49,8 @@ def pdf_to_csv(uploaded_file):
 def clean_rows(df):
     index_list = []
 
-    for index, _ in df.iterrows():
-        if len(set([x for x in df.iloc[index, :]])) < 3:
+    for index, row in df.iterrows():
+        if len(set([x for x in df.iloc[index, :]])) < 7:
             index_list.append(index)
             df.iloc[index-1, -1] = str(df.iloc[index-1, -1]) + str(df.iloc[index, -1])
 
